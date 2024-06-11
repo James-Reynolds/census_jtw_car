@@ -1,0 +1,193 @@
+---
+title: "Bayside census analysis"
+runningheader: "Bayside census analysis" # only for pdf output
+subtitle: "Working note" # only for html output
+author: "Dr James Reynolds"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_html: default
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+bibliography: skeleton.bib
+link-citations: yes
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggstatsplot)
+library(gtsummary)
+library(janitor)
+library(knitr)
+library(readr)
+library(tidyverse)
+library(tufte)
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+```
+
+# Introduction
+The Public Transport Research Group (PTRG) is reviewing census data for 2011, 2016 and 2021 for Greater Melbourne and the City of Bayside. Journey to work travel, mode and total cars per person are the particular areas of interest.  
+
+This working note details the analysis and results. 
+
+# Methodology
+Australian Bureau of Statistics (ABS) census data was obtained using the TableBuilder platform. Details are as follows
+
+
+## Cars per dwelling
+The number of cars is enumerated in the census for each dwelling^[See https://www.abs.gov.au/census/guide-census-data/census-dictionary/2021/variables-topic/transport/number-motor-vehicles-vehd]. The following loads and cleans the data for 2011, 2016 and 2021. The data includes all Greater Capital City Statistical Areas (GCCSAs) and all Local Government Areas (LGAs)
+
+```{r cars_per_dwelling_load_data, message=FALSE, warning=FALSE}
+
+gccsa_dw_vehd_2021 <- read_csv("data/gccsa_dw_vehd_2021.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_dw_vehd_2021 <- gccsa_dw_vehd_2021[-1,]
+gccsa_dw_vehd_2021 <- gccsa_dw_vehd_2021[1:25,1:34]
+gccsa_dw_vehd_2021 <- gccsa_dw_vehd_2021 %>% clean_names()
+
+gccsa_dw_vehd_2016 <- read_csv("data/gccsa_dw_vehd_2016.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_dw_vehd_2016 <- gccsa_dw_vehd_2016[-1,]
+gccsa_dw_vehd_2016 <- gccsa_dw_vehd_2016[1:25,1:34]
+gccsa_dw_vehd_2016 <- gccsa_dw_vehd_2016 %>% clean_names()
+
+gccsa_dw_vehd_2011 <- read_csv("data/gccsa_dw_vehd_2011.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_dw_vehd_2011 <- gccsa_dw_vehd_2011[-1,]
+gccsa_dw_vehd_2011 <- gccsa_dw_vehd_2011[1:25,1:34]
+gccsa_dw_vehd_2011 <- gccsa_dw_vehd_2011 %>% clean_names()
+
+
+lga_dw_vehd_2021 <- read_csv("data/lga_dw_vehd_2021.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+lga_dw_vehd_2021 <- lga_dw_vehd_2021[-1,]
+lga_dw_vehd_2021 <- lga_dw_vehd_2021[1:556,1:34]
+lga_dw_vehd_2021 <- lga_dw_vehd_2021 %>% clean_names()
+
+
+lga_dw_vehd_2016 <- read_csv("data/lga_dw_vehd_2016.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+lga_dw_vehd_2016 <- lga_dw_vehd_2016[-1,]
+lga_dw_vehd_2016 <- lga_dw_vehd_2016[1:554,1:34]
+lga_dw_vehd_2016 <- lga_dw_vehd_2016 %>% clean_names()
+
+
+lga_dw_vehd_2011 <- read_csv("data/lga_dw_vehd_2011.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+lga_dw_vehd_2011 <- lga_dw_vehd_2011[-1,]
+lga_dw_vehd_2011 <- lga_dw_vehd_2011[1:568,1:34]
+lga_dw_vehd_2011 <- lga_dw_vehd_2011 %>% clean_names()
+
+
+
+
+```
+
+
+
+
+## Population of driving age
+
+
+# Results
+## Cars per dwelling
+
+```{r cars_per_dwelling_summarise_data, message=FALSE, warning=FALSE}
+
+cars_per_dwelling_summary_table <- gccsa_dw_vehd_2021 %>%
+  filter(vehd_number_of_motor_vehicles == "Greater Melbourne")
+
+cars_per_dwelling_summary_table <- cars_per_dwelling_summary_table %>% 
+  add_row(gccsa_dw_vehd_2016 %>%
+  filter(vehd_number_of_motor_vehicles == "Greater Melbourne"))
+
+cars_per_dwelling_summary_table <- cars_per_dwelling_summary_table %>% 
+  add_row(gccsa_dw_vehd_2011 %>%
+  filter(vehd_number_of_motor_vehicles == "Greater Melbourne"))
+
+cars_per_dwelling_summary_table <- cars_per_dwelling_summary_table %>% 
+  add_row(lga_dw_vehd_2021 %>%
+  filter(vehd_number_of_motor_vehicles == "Bayside (Vic.)"))
+
+cars_per_dwelling_summary_table <- cars_per_dwelling_summary_table %>% 
+  add_row(lga_dw_vehd_2016 %>%
+  filter(vehd_number_of_motor_vehicles == "Bayside (C)"))
+
+cars_per_dwelling_summary_table <- cars_per_dwelling_summary_table %>% 
+  add_row(lga_dw_vehd_2011 %>%
+  filter(vehd_number_of_motor_vehicles == "Bayside (C)"))
+
+cars_per_dwelling_summary_table$Year <- c(2021, 2016, 2011, 2021, 2016, 2011)
+
+#replace first column with consistent place names
+area_of_interest <- c("Greater Melbourne", "Greater Melbourne", "Greater Melbourne", "Bayside", "Bayside", "Bayside")
+cars_per_dwelling_summary_table[["vehd_number_of_motor_vehicles"]] <- area_of_interest
+colnames(cars_per_dwelling_summary_table)[colnames(cars_per_dwelling_summary_table) == "vehd_number_of_motor_vehicles"] <- "area_of_interest"
+
+cars_per_dwelling_summary_table$total_cars <- 0
+
+cars_per_dwelling_summary_table$total_cars <- cars_per_dwelling_summary_table$x1_motor_vehicle + 
+  cars_per_dwelling_summary_table$x2_motor_vehicles * 2 + 
+  cars_per_dwelling_summary_table$x3_motor_vehicles * 3 + 
+  cars_per_dwelling_summary_table$x4_motor_vehicles * 4 + 
+  cars_per_dwelling_summary_table$x5_motor_vehicles * 5 + 
+  cars_per_dwelling_summary_table$x6_motor_vehicles * 6 + 
+  cars_per_dwelling_summary_table$x7_motor_vehicles * 7 + 
+  cars_per_dwelling_summary_table$x8_motor_vehicles * 8 + 
+  cars_per_dwelling_summary_table$x9_motor_vehicles * 9 + 
+  cars_per_dwelling_summary_table$x10_motor_vehicles * 10 + 
+  cars_per_dwelling_summary_table$x11_motor_vehicles * 11 + 
+  cars_per_dwelling_summary_table$x12_motor_vehicles * 12 + 
+  cars_per_dwelling_summary_table$x13_motor_vehicles * 13 + 
+  cars_per_dwelling_summary_table$x14_motor_vehicles * 14 + 
+  cars_per_dwelling_summary_table$x15_motor_vehicles * 15 + 
+  cars_per_dwelling_summary_table$x16_motor_vehicles * 16 + 
+  cars_per_dwelling_summary_table$x17_motor_vehicles * 17 + 
+  cars_per_dwelling_summary_table$x18_motor_vehicles * 18 + 
+  cars_per_dwelling_summary_table$x19_motor_vehicles * 19 + 
+  cars_per_dwelling_summary_table$x20_motor_vehicles * 20 + 
+  cars_per_dwelling_summary_table$x21_motor_vehicles * 21 + 
+  cars_per_dwelling_summary_table$x22_motor_vehicles * 22 + 
+  cars_per_dwelling_summary_table$x23_motor_vehicles * 23 + 
+  cars_per_dwelling_summary_table$x24_motor_vehicles * 24 + 
+  cars_per_dwelling_summary_table$x25_motor_vehicles * 25 + 
+  cars_per_dwelling_summary_table$x26_motor_vehicles * 26 + 
+  cars_per_dwelling_summary_table$x27_motor_vehicles * 27 + 
+  cars_per_dwelling_summary_table$x28_motor_vehicles * 28 + 
+  cars_per_dwelling_summary_table$x29_motor_vehicles * 29 + 
+  cars_per_dwelling_summary_table$x30_or_more_motor_vehicles * 30 
+
+summary_table <- cars_per_dwelling_summary_table %>% 
+  select(area_of_interest, Year, total_cars)
+
+cars_per_dwelling_summary_table %>% 
+  select(area_of_interest, Year, total_cars) %>% 
+  pivot_wider(
+  names_from = area_of_interest, 
+  values_from = total_cars
+) %>%   mutate(across(`Greater Melbourne`, ~ format(.x, big.mark = ","))) %>% 
+  mutate(across(Bayside, ~ format(.x, big.mark = ","))) %>%
+  knitr::kable(caption = "Total number of cars by census", align = 'lrr')
+
+```
+
+
+# Discussion and Conclusions
+
+# References
+
+```{r bib, include=FALSE}
+# create a bib file for the R packages used in this document
+knitr::write_bib(c('base', 'rmarkdown'), file = 'skeleton.bib')
+```
