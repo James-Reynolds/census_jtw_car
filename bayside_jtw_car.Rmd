@@ -95,9 +95,74 @@ lga_dw_vehd_2011 <- lga_dw_vehd_2011 %>% clean_names()
 ```
 
 
-
-
 ## Population of driving age
+
+Population of driving age was extracted from the census results that are enumerated by place of usual residence. The following loads and cleans the data for 2011, 2016 and 2021. The data includes all Greater Capital City Statistical Areas (GCCSAs) and all Local Government Areas (LGAs)
+
+
+```{r population_load_data, message=FALSE, warning=FALSE}
+
+gccsa_ur_agep_2021 <- read_csv("data/gccsa_ur_agep_2021.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_ur_agep_2021 <- gccsa_ur_agep_2021[-1,]
+gccsa_ur_agep_2021 <- gccsa_ur_agep_2021[1:34,1:118]
+gccsa_ur_agep_2021 <- gccsa_ur_agep_2021 %>% clean_names()
+
+gccsa_ur_agep_2016 <- read_csv("data/gccsa_ur_agep_2016.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_ur_agep_2016 <- gccsa_ur_agep_2016[-1,]
+gccsa_ur_agep_2016 <- gccsa_ur_agep_2016[1:34,1:118]
+gccsa_ur_agep_2016 <- gccsa_ur_agep_2016 %>% clean_names()
+
+gccsa_ur_agep_2011 <- read_csv("data/gccsa_ur_agep_2011.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_ur_agep_2011 <- gccsa_ur_agep_2011[-1,]
+gccsa_ur_agep_2011 <- gccsa_ur_agep_2011[1:34,1:118]
+gccsa_ur_agep_2011 <- gccsa_ur_agep_2011 %>% clean_names()
+
+lga_ur_agep_2021 <- read_csv("data/lga_ur_agep_2021.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+lga_ur_agep_2021 <- lga_ur_agep_2021[-1,]
+lga_ur_agep_2021 <- lga_ur_agep_2021[1:565,1:118]
+lga_ur_agep_2021 <- lga_ur_agep_2021 %>% clean_names()
+
+lga_ur_agep_2016 <- read_csv("data/lga_ur_agep_2016.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+lga_ur_agep_2016 <- lga_ur_agep_2016[-1,]
+lga_ur_agep_2016 <- lga_ur_agep_2016[1:563,1:118]
+lga_ur_agep_2016 <- lga_ur_agep_2016 %>% clean_names()
+
+lga_ur_agep_2011 <- read_csv("data/lga_ur_agep_2011.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+lga_ur_agep_2011 <- lga_ur_agep_2011[-1,]
+lga_ur_agep_2011 <- lga_ur_agep_2011[1:577,1:118]
+lga_ur_agep_2011 <- lga_ur_agep_2011 %>% clean_names()
+
+#fix column names
+colnames(gccsa_ur_agep_2021)[colnames(gccsa_ur_agep_2021) == "agep_age"] <- "area_of_interest"
+colnames(gccsa_ur_agep_2016)[colnames(gccsa_ur_agep_2016) == "agep_age"] <- "area_of_interest"
+colnames(gccsa_ur_agep_2011) <- colnames(gccsa_ur_agep_2016)
+colnames(lga_ur_agep_2021)[colnames(lga_ur_agep_2021) == "agep_age"] <- "area_of_interest"
+colnames(lga_ur_agep_2016)[colnames(lga_ur_agep_2016) == "agep_age"] <- "area_of_interest"
+colnames(lga_ur_agep_2011) <- colnames(lga_ur_agep_2016)
+
+#fix variable types
+gccsa_ur_agep_2021 <- gccsa_ur_agep_2021 %>% type.convert(as.is = T)
+gccsa_ur_agep_2016 <- gccsa_ur_agep_2016 %>% type.convert(as.is = T)
+gccsa_ur_agep_2011 <- gccsa_ur_agep_2011 %>% type.convert(as.is = T)
+lga_ur_agep_2021 <- lga_ur_agep_2021 %>% type.convert(as.is = T)
+lga_ur_agep_2016 <- lga_ur_agep_2016 %>% type.convert(as.is = T)
+lga_ur_agep_2011 <- lga_ur_agep_2011 %>% type.convert(as.is = T)
+
+
+
+```
 
 
 # Results
@@ -171,15 +236,154 @@ cars_per_dwelling_summary_table$total_cars <- cars_per_dwelling_summary_table$x1
 summary_table <- cars_per_dwelling_summary_table %>% 
   select(area_of_interest, Year, total_cars)
 
-cars_per_dwelling_summary_table %>% 
+total_cars_summary_table <- cars_per_dwelling_summary_table %>% 
   select(area_of_interest, Year, total_cars) %>% 
   pivot_wider(
   names_from = area_of_interest, 
   values_from = total_cars
-) %>%   mutate(across(`Greater Melbourne`, ~ format(.x, big.mark = ","))) %>% 
-  mutate(across(Bayside, ~ format(.x, big.mark = ","))) %>%
-  knitr::kable(caption = "Total number of cars by census", align = 'lrr')
+)
 
+
+total_cars_summary_table$`Rest of Greater Melbourne` <- total_cars_summary_table$`Greater Melbourne` - total_cars_summary_table$Bayside
+ 
+total_cars_summary_table <- total_cars_summary_table %>% 
+  select(Year, Bayside, `Rest of Greater Melbourne`)
+
+total_cars_summary_table$Year <- total_cars_summary_table$Year %>% 
+  factor(levels = c("2011", "2016", "2021")) 
+
+total_cars_summary_table <- total_cars_summary_table %>% 
+  arrange(Year)
+
+total_cars_summary_table %>%   
+  adorn_totals(where = "col") %>% 
+  adorn_percentages(denominator = "row") %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>%
+  kable(caption = "Total number of cars by census", 
+        align = 'lrr', 
+        format.args = list(big.mark = ","))
+
+# ggbarstats(total_cars_summary_table %>% pivot_longer(
+#    cols = 2:3,
+#    names_to = "area_of_interest", 
+#    values_to = "Total cars"),
+#  y = Year, 
+#  x = area_of_interest, 
+#  counts = "Total cars")
+
+```
+
+## Population of driving age
+
+```{r population_of_driving_age_summarise_data, message=FALSE, warning=FALSE}
+
+driving_age_summary_table <- gccsa_ur_agep_2021 %>%
+  filter(area_of_interest == "Greater Melbourne")
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(gccsa_ur_agep_2016 %>%
+  filter(area_of_interest == "Greater Melbourne"))
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(gccsa_ur_agep_2011 %>%
+  filter(area_of_interest == "Greater Melbourne"))
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(lga_ur_agep_2021 %>%
+  filter(area_of_interest == "Bayside (Vic.)"))
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(lga_ur_agep_2016 %>%
+  filter(area_of_interest == "Bayside (C)"))
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(lga_ur_agep_2011 %>%
+  filter(area_of_interest == "Bayside (C)"))
+
+driving_age_summary_table$Year <- c(2021, 2016, 2011, 2021, 2016, 2011)
+
+#replace first column with consistent place names
+driving_age_summary_table[["area_of_interest"]] <- c("Greater Melbourne", "Greater Melbourne", "Greater Melbourne", "Bayside", "Bayside", "Bayside")
+
+driving_age_summary_table$driving_age_population <- driving_age_summary_table[,20:117] %>% rowSums()
+
+
+total_population_summary_table <- driving_age_summary_table %>% 
+  select(area_of_interest, Year, total)
+
+
+driving_age_summary_table <- driving_age_summary_table %>% 
+  select(area_of_interest, Year, driving_age_population)
+
+driving_age_summary_table_wider <- driving_age_summary_table %>% 
+  select(area_of_interest, Year, driving_age_population) %>% 
+  pivot_wider(
+  names_from = area_of_interest, 
+  values_from = driving_age_population
+)
+
+
+driving_age_summary_table_wider$`Rest of Greater Melbourne` <- driving_age_summary_table_wider$`Greater Melbourne` - driving_age_summary_table_wider$Bayside
+ 
+driving_age_summary_table_wider <- driving_age_summary_table_wider %>% 
+  select(Year, Bayside, `Rest of Greater Melbourne`)
+
+driving_age_summary_table_wider$Year <- driving_age_summary_table_wider$Year %>%   factor(levels = c("2011", "2016", "2021")) 
+
+driving_age_summary_table_wider <- driving_age_summary_table_wider %>% 
+  arrange(Year)
+
+driving_age_summary_table_wider %>%   
+  adorn_totals(where = "col") %>% 
+  adorn_percentages(denominator = "row") %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>%
+  kable(caption = "Total population 18 and older", 
+        align = 'lrr', 
+        format.args = list(big.mark = ","))
+
+ ggbarstats(driving_age_summary_table_wider %>% pivot_longer(
+    cols = 2:3,
+    names_to = "area_of_interest", 
+    values_to = "Total population 18 and older"),
+  y = Year, 
+  x = area_of_interest, 
+  counts = "Total population 18 and older")
+
+ 
+#### Total Popluation 
+ 
+total_population_summary_table_wider <- total_population_summary_table %>% 
+  pivot_wider(
+  names_from = area_of_interest, 
+  values_from = total
+)
+
+
+total_population_summary_table_wider$`Rest of Greater Melbourne` <- total_population_summary_table_wider$`Greater Melbourne` - total_population_summary_table_wider$Bayside
+ 
+total_population_summary_table_wider <- total_population_summary_table_wider %>% 
+  select(Year, Bayside, `Rest of Greater Melbourne`)
+
+total_population_summary_table_wider$Year <- total_population_summary_table_wider$Year %>%   factor(levels = c("2011", "2016", "2021")) 
+
+total_population_summary_table_wider <- total_population_summary_table_wider %>% 
+  arrange(Year)
+
+total_population_summary_table_wider %>%   
+  adorn_totals(where = "col") %>% 
+  adorn_percentages(denominator = "row") %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>%
+  kable(caption = "Total population", 
+        align = 'lrr', 
+        format.args = list(big.mark = ","))
+
+ ggbarstats(total_population_summary_table_wider %>% pivot_longer(
+    cols = 2:3,
+    names_to = "area_of_interest", 
+    values_to = "Total population"),
+  y = Year, 
+  x = area_of_interest, 
+  counts = "Total population")
+
+ 
 ```
 
 
