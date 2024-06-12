@@ -421,9 +421,9 @@ grouped_ggbarstats(data = share_18_and_old_longer,
 
 ```
 
-## Cars per dwelling
 
-```{r cars_per_dwelling_summarise_data, message=FALSE, warning=FALSE, echo=FALSE}
+## Vehicle availabilty
+```{r cars_per_dwelling_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.caption = "Total vehicles at or near household on the night of the census", fig.fullwidth = TRUE}
 
 cars_per_dwelling_summary_table <- gccsa_dw_vehd_2021 %>%
   filter(vehd_number_of_motor_vehicles == "Greater Melbourne")
@@ -519,13 +519,13 @@ total_cars_summary_table %>%
         align = 'lrr', 
         format.args = list(big.mark = ","))
 
-# ggbarstats(total_cars_summary_table %>% pivot_longer(
-#    cols = 2:3,
-#    names_to = "area_of_interest", 
-#    values_to = "Total cars"),
-#  y = Year, 
-#  x = area_of_interest, 
-#  counts = "Total cars")
+ ggbarstats(total_cars_summary_table %>% pivot_longer(
+    cols = 2:3,
+    names_to = "area_of_interest", 
+    values_to = "Total cars"),
+  y = Year, 
+  x = area_of_interest, 
+  counts = "Total cars")
 
 ```
 
