@@ -22,6 +22,7 @@ library(ggstatsplot)
 library(gtsummary)
 library(janitor)
 library(knitr)
+library(kableExtra)
 library(readr)
 library(tidyverse)
 library(tufte)
@@ -39,68 +40,12 @@ This working note details the analysis and results.
 Australian Bureau of Statistics (ABS) census data was obtained using the TableBuilder platform. Details are as follows
 
 
-## Cars per dwelling
-The number of cars is enumerated in the census for each dwelling^[See https://www.abs.gov.au/census/guide-census-data/census-dictionary/2021/variables-topic/transport/number-motor-vehicles-vehd]. The following loads and cleans the data for 2011, 2016 and 2021. The data includes all Greater Capital City Statistical Areas (GCCSAs) and all Local Government Areas (LGAs)
+## Population and population over 18
 
-```{r cars_per_dwelling_load_data, message=FALSE, warning=FALSE}
-
-gccsa_dw_vehd_2021 <- read_csv("data/gccsa_dw_vehd_2021.csv", 
-    skip = 8)
-#remove unneeded rows and columns and clean names
-gccsa_dw_vehd_2021 <- gccsa_dw_vehd_2021[-1,]
-gccsa_dw_vehd_2021 <- gccsa_dw_vehd_2021[1:25,1:34]
-gccsa_dw_vehd_2021 <- gccsa_dw_vehd_2021 %>% clean_names()
-
-gccsa_dw_vehd_2016 <- read_csv("data/gccsa_dw_vehd_2016.csv", 
-    skip = 8)
-#remove unneeded rows and columns and clean names
-gccsa_dw_vehd_2016 <- gccsa_dw_vehd_2016[-1,]
-gccsa_dw_vehd_2016 <- gccsa_dw_vehd_2016[1:25,1:34]
-gccsa_dw_vehd_2016 <- gccsa_dw_vehd_2016 %>% clean_names()
-
-gccsa_dw_vehd_2011 <- read_csv("data/gccsa_dw_vehd_2011.csv", 
-    skip = 8)
-#remove unneeded rows and columns and clean names
-gccsa_dw_vehd_2011 <- gccsa_dw_vehd_2011[-1,]
-gccsa_dw_vehd_2011 <- gccsa_dw_vehd_2011[1:25,1:34]
-gccsa_dw_vehd_2011 <- gccsa_dw_vehd_2011 %>% clean_names()
+Population of driving age was extracted from the census results that are enumerated by place of usual residence. Data was loaded and cleaned for 2011, 2016 and 2021.
 
 
-lga_dw_vehd_2021 <- read_csv("data/lga_dw_vehd_2021.csv", 
-    skip = 8)
-#remove unneeded rows and columns and clean names
-lga_dw_vehd_2021 <- lga_dw_vehd_2021[-1,]
-lga_dw_vehd_2021 <- lga_dw_vehd_2021[1:556,1:34]
-lga_dw_vehd_2021 <- lga_dw_vehd_2021 %>% clean_names()
-
-
-lga_dw_vehd_2016 <- read_csv("data/lga_dw_vehd_2016.csv", 
-    skip = 8)
-#remove unneeded rows and columns and clean names
-lga_dw_vehd_2016 <- lga_dw_vehd_2016[-1,]
-lga_dw_vehd_2016 <- lga_dw_vehd_2016[1:554,1:34]
-lga_dw_vehd_2016 <- lga_dw_vehd_2016 %>% clean_names()
-
-
-lga_dw_vehd_2011 <- read_csv("data/lga_dw_vehd_2011.csv", 
-    skip = 8)
-#remove unneeded rows and columns and clean names
-lga_dw_vehd_2011 <- lga_dw_vehd_2011[-1,]
-lga_dw_vehd_2011 <- lga_dw_vehd_2011[1:568,1:34]
-lga_dw_vehd_2011 <- lga_dw_vehd_2011 %>% clean_names()
-
-
-
-
-```
-
-
-## Population of driving age
-
-Population of driving age was extracted from the census results that are enumerated by place of usual residence. The following loads and cleans the data for 2011, 2016 and 2021. The data includes all Greater Capital City Statistical Areas (GCCSAs) and all Local Government Areas (LGAs)
-
-
-```{r population_load_data, message=FALSE, warning=FALSE}
+```{r population_load_data, message=FALSE, warning=FALSE, echo=FALSE}
 
 gccsa_ur_agep_2021 <- read_csv("data/gccsa_ur_agep_2021.csv", 
     skip = 8)
@@ -164,11 +109,321 @@ lga_ur_agep_2011 <- lga_ur_agep_2011 %>% type.convert(as.is = T)
 
 ```
 
+## Cars per dwelling
+The number of cars is enumerated in the census for each dwelling^[See https://www.abs.gov.au/census/guide-census-data/census-dictionary/2021/variables-topic/transport/number-motor-vehicles-vehd]. Data was loaded and cleaned for 2011, 2016 and 2021.
+
+```{r cars_per_dwelling_load_data, message=FALSE, warning=FALSE, echo=FALSE}
+
+gccsa_dw_vehd_2021 <- read_csv("data/gccsa_dw_vehd_2021.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_dw_vehd_2021 <- gccsa_dw_vehd_2021[-1,]
+gccsa_dw_vehd_2021 <- gccsa_dw_vehd_2021[1:25,1:34]
+gccsa_dw_vehd_2021 <- gccsa_dw_vehd_2021 %>% clean_names()
+
+gccsa_dw_vehd_2016 <- read_csv("data/gccsa_dw_vehd_2016.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_dw_vehd_2016 <- gccsa_dw_vehd_2016[-1,]
+gccsa_dw_vehd_2016 <- gccsa_dw_vehd_2016[1:25,1:34]
+gccsa_dw_vehd_2016 <- gccsa_dw_vehd_2016 %>% clean_names()
+
+gccsa_dw_vehd_2011 <- read_csv("data/gccsa_dw_vehd_2011.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_dw_vehd_2011 <- gccsa_dw_vehd_2011[-1,]
+gccsa_dw_vehd_2011 <- gccsa_dw_vehd_2011[1:25,1:34]
+gccsa_dw_vehd_2011 <- gccsa_dw_vehd_2011 %>% clean_names()
+
+
+lga_dw_vehd_2021 <- read_csv("data/lga_dw_vehd_2021.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+lga_dw_vehd_2021 <- lga_dw_vehd_2021[-1,]
+lga_dw_vehd_2021 <- lga_dw_vehd_2021[1:556,1:34]
+lga_dw_vehd_2021 <- lga_dw_vehd_2021 %>% clean_names()
+
+
+lga_dw_vehd_2016 <- read_csv("data/lga_dw_vehd_2016.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+lga_dw_vehd_2016 <- lga_dw_vehd_2016[-1,]
+lga_dw_vehd_2016 <- lga_dw_vehd_2016[1:554,1:34]
+lga_dw_vehd_2016 <- lga_dw_vehd_2016 %>% clean_names()
+
+
+lga_dw_vehd_2011 <- read_csv("data/lga_dw_vehd_2011.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+lga_dw_vehd_2011 <- lga_dw_vehd_2011[-1,]
+lga_dw_vehd_2011 <- lga_dw_vehd_2011[1:568,1:34]
+lga_dw_vehd_2011 <- lga_dw_vehd_2011 %>% clean_names()
+
+
+
+
+```
+
+
 
 # Results
+
+
+## Population and population 18 and over
+
+The following tables and figures show the population that is 18 years and older and the total populations in both the City of Bayside and the rest of Greater Melbourne. 
+
+```{r population_of_driving_age_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, fig.caption = "Total population 18 and older"}
+
+driving_age_summary_table <- gccsa_ur_agep_2021 %>%
+  filter(area_of_interest == "Greater Melbourne")
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(gccsa_ur_agep_2016 %>%
+  filter(area_of_interest == "Greater Melbourne"))
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(gccsa_ur_agep_2011 %>%
+  filter(area_of_interest == "Greater Melbourne"))
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(lga_ur_agep_2021 %>%
+  filter(area_of_interest == "Bayside (Vic.)"))
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(lga_ur_agep_2016 %>%
+  filter(area_of_interest == "Bayside (C)"))
+driving_age_summary_table <- driving_age_summary_table %>% 
+  add_row(lga_ur_agep_2011 %>%
+  filter(area_of_interest == "Bayside (C)"))
+
+driving_age_summary_table$Year <- c(2021, 2016, 2011, 2021, 2016, 2011)
+
+#replace first column with consistent place names
+driving_age_summary_table[["area_of_interest"]] <- c("Greater Melbourne", "Greater Melbourne", "Greater Melbourne", "Bayside", "Bayside", "Bayside")
+
+driving_age_summary_table$driving_age_population <- driving_age_summary_table[,20:117] %>% rowSums()
+
+
+total_population_summary_table <- driving_age_summary_table %>% 
+  select(area_of_interest, Year, total)
+
+
+driving_age_summary_table <- driving_age_summary_table %>% 
+  select(area_of_interest, Year, driving_age_population)
+
+driving_age_summary_table_wider <- driving_age_summary_table %>% 
+  select(area_of_interest, Year, driving_age_population) %>% 
+  pivot_wider(
+  names_from = area_of_interest, 
+  values_from = driving_age_population
+)
+
+
+driving_age_summary_table_wider$`Rest of Greater Melbourne` <- driving_age_summary_table_wider$`Greater Melbourne` - driving_age_summary_table_wider$Bayside
+ 
+driving_age_summary_table_wider <- driving_age_summary_table_wider %>% 
+  select(Year, Bayside, `Rest of Greater Melbourne`)
+
+driving_age_summary_table_wider$Year <- driving_age_summary_table_wider$Year %>%   factor(levels = c("2011", "2016", "2021")) 
+
+driving_age_summary_table_wider <- driving_age_summary_table_wider %>% 
+  arrange(Year)
+
+driving_age_summary_table_wider %>%   
+  adorn_totals(where = "col") %>% 
+  adorn_percentages(denominator = "row") %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>%
+  kable(caption = "Total population 18 and older", 
+        align = 'lrr', 
+        format.args = list(big.mark = ","))
+
+ ggbarstats(driving_age_summary_table_wider %>% pivot_longer(
+    cols = 2:3,
+    names_to = "area_of_interest", 
+    values_to = "Total population 18 and older"),
+  y = Year, 
+  x = area_of_interest, 
+  counts = "Total population 18 and older")
+
+```
+ 
+
+
+
+```{r population_total_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, fig.caption = "Total population"}
+
+ 
+#### Total Popluation 
+ 
+total_population_summary_table_wider <- total_population_summary_table %>% 
+  pivot_wider(
+  names_from = area_of_interest, 
+  values_from = total
+)
+
+
+total_population_summary_table_wider$`Rest of Greater Melbourne` <- total_population_summary_table_wider$`Greater Melbourne` - total_population_summary_table_wider$Bayside
+ 
+total_population_summary_table_wider <- total_population_summary_table_wider %>% 
+  select(Year, Bayside, `Rest of Greater Melbourne`)
+
+total_population_summary_table_wider$Year <- total_population_summary_table_wider$Year %>%   factor(levels = c("2011", "2016", "2021")) 
+
+total_population_summary_table_wider <- total_population_summary_table_wider %>% 
+  arrange(Year)
+
+total_population_summary_table_wider %>%   
+  adorn_totals(where = "col") %>% 
+  adorn_percentages(denominator = "row") %>% 
+  adorn_pct_formatting() %>% 
+  adorn_ns() %>%
+  kable(caption = "Total population", 
+        align = 'lrr', 
+        format.args = list(big.mark = ","))
+
+ ggbarstats(total_population_summary_table_wider %>% pivot_longer(
+    cols = 2:3,
+    names_to = "area_of_interest", 
+    values_to = "Total population"),
+  y = Year, 
+  x = area_of_interest, 
+  counts = "Total population")
+```
+
+The following tables and figures compare the share of the population that is over or under the age of 18. 
+
+```{r population_comparisons, message=FALSE, warning=FALSE, echo=FALSE, fig.caption = "Population share: younger than 18 compared to 18 and over", fig.fullwidth = TRUE, fig.height = 10}
+
+ population_comparison_table <- driving_age_summary_table_wider %>%
+   adorn_totals(where = "col")
+ population_comparison_table$total_population_bayside <- total_population_summary_table_wider$Bayside
+  population_comparison_table$total_population_rest_of_greater_melbourne <- total_population_summary_table_wider$`Rest of Greater Melbourne`
+ population_comparison_table$total_population_greater_melbourne <- 
+   total_population_summary_table_wider$Bayside +
+   total_population_summary_table_wider$`Rest of Greater Melbourne`
+   
+names(population_comparison_table) <- c(
+  "Year", 
+  "x18plus_bayside", 
+  "x18plus_rest_of_melbourne", 
+  "x18plus_greater_melbourne", 
+  "total_population_bayside", 
+  "total_population_rest_of_melbourne", 
+  "total_population_greater_melbourne") 
+
+population_comparison_table$x18plus_share_bayside <- population_comparison_table$x18plus_bayside / population_comparison_table$total_population_bayside
+
+population_comparison_table$x18plus_share_rest_of_melbourne <- population_comparison_table$x18plus_rest_of_melbourne / population_comparison_table$total_population_rest_of_melbourne
+
+population_comparison_table$x18plus_share_greater_melbourne <- population_comparison_table$x18plus_greater_melbourne / population_comparison_table$total_population_greater_melbourne
+
+# plot giant comparison table
+kable(population_comparison_table %>% 
+        adorn_pct_formatting(,,,8:10), 
+      caption = "City of Bayside and Rest of Greater Melbourne: population 18 and over, total, and share 18 and over",
+      align = "lrrrrrrrrrr",
+      format.args = list(big.mark = ",", scientific = FALSE),
+      col.names = c("Year", 
+                   "City of Bayside", "Rest of Greater Melbourne", "Total",
+                   "City of Bayside", "Rest of Greater Melbourne", "Total",
+                   "City of Bayside", "Rest of Greater Melbourne", "Total")
+      ) %>% 
+  column_spec(column = 8:10, ) %>%
+  add_header_above(c("Census" =1, "18 years and older" = 3, "Total population" = 3, "Share 18 years and older" = 3))
+
+
+# compares shares
+#share_18_and_old <- population_comparison_table %>% 
+#  select(Year, 
+#  x18plus_bayside, 
+#  x18plus_rest_of_melbourne, 
+#  total_population_bayside, 
+#  total_population_rest_of_melbourne)
+
+#share_18_and_old$x17minus_bayside <- share_18_and_old$total_population_bayside - share_18_and_old$x18plus_bayside
+#share_18_and_old$x17minus_rest_of_melbourne <- share_18_and_old$total_population_rest_of_melbourne - share_18_and_old$x18plus_rest_of_melbourne
+
+#share_18_and_old <- share_18_and_old %>% select(
+#  Year, 
+#  x17minus_bayside, 
+#  x18plus_bayside,
+#  x17minus_rest_of_melbourne,
+#  x18plus_rest_of_melbourne
+#)
+
+#share_18_and_old
+
+#kable(share_18_and_old %>% 
+#        untabyl() %>%
+#        adorn_totals(where = "col") %>%
+#        adorn_percentages() %>% 
+#        adorn_pct_formatting() %>% 
+#        adorn_ns, 
+#      caption = "City of Bayside and Rest of Greater Melbourne: population younger and older than 18",
+#      align = "lrrrrr",
+#      col.names = c("Year", 
+#                   "under 18", "over 18", 
+#                   "under 18", "over 18",
+#                   "Total")) %>%
+#        add_header_above(c("Census" = 1, "City of Bayside" = 2, "Rest of Melbourne" = 2, "Grand" = 1))
+
+
+
+# compares shares
+share_18_and_old_bayside <- population_comparison_table %>% 
+  select(Year, 
+  x18plus_bayside, 
+  total_population_bayside)
+
+share_18_and_old_bayside$x17_minus <- share_18_and_old_bayside$total_population_bayside - share_18_and_old_bayside$x18plus_bayside
+share_18_and_old_bayside$area_of_interest <- "City of Bayside"
+names(share_18_and_old_bayside) <- c("Year", "x18_plus", "total", "x17_minus", "area_of_interest")
+
+
+share_18_and_old_rest_of_melbourne <- population_comparison_table %>% 
+  select(Year, 
+  x18plus_rest_of_melbourne, 
+  total_population_rest_of_melbourne)
+share_18_and_old_rest_of_melbourne$x17_minus <- share_18_and_old_rest_of_melbourne$total_population_rest_of_melbourne - share_18_and_old_rest_of_melbourne$x18plus_rest_of_melbourne
+share_18_and_old_rest_of_melbourne$area_of_interest <- "Rest of Melbourne"
+names(share_18_and_old_rest_of_melbourne) <- c("Year", "x18_plus", "total", "x17_minus", "area_of_interest")
+
+share_18_and_old <- add_row(share_18_and_old_bayside %>% 
+                              select(Year, area_of_interest, x17_minus, x18_plus), 
+                            share_18_and_old_rest_of_melbourne %>% 
+                              select(Year, area_of_interest, x17_minus, x18_plus))
+
+share_18_and_old <- share_18_and_old %>% arrange(Year)
+
+
+kable(share_18_and_old %>% 
+        untabyl() %>%
+        adorn_totals(where = "col") %>%
+        adorn_percentages() %>% 
+        adorn_pct_formatting() %>% 
+        adorn_ns, 
+      caption = "City of Bayside and Rest of Greater Melbourne: population younger and older than 18",
+      align = "llrrr",
+      col.names = c("Year", "Location", "under 18", "over 18", "Total"))
+
+share_18_and_old_longer <- share_18_and_old %>% 
+  pivot_longer(cols = 3:4,
+               names_to = "group", 
+               values_to = "population")
+
+grouped_ggbarstats(data = share_18_and_old_longer, 
+                   x = group, 
+                   y = area_of_interest, 
+                   counts = population, 
+                   grouping.var = Year, 
+                   plotgrid.args = list(nrow = 3), 
+                   xlab = "Age group", 
+                   ylab = "Area")
+                   
+
+```
+
 ## Cars per dwelling
 
-```{r cars_per_dwelling_summarise_data, message=FALSE, warning=FALSE}
+```{r cars_per_dwelling_summarise_data, message=FALSE, warning=FALSE, echo=FALSE}
 
 cars_per_dwelling_summary_table <- gccsa_dw_vehd_2021 %>%
   filter(vehd_number_of_motor_vehicles == "Greater Melbourne")
@@ -274,117 +529,6 @@ total_cars_summary_table %>%
 
 ```
 
-## Population of driving age
-
-```{r population_of_driving_age_summarise_data, message=FALSE, warning=FALSE}
-
-driving_age_summary_table <- gccsa_ur_agep_2021 %>%
-  filter(area_of_interest == "Greater Melbourne")
-driving_age_summary_table <- driving_age_summary_table %>% 
-  add_row(gccsa_ur_agep_2016 %>%
-  filter(area_of_interest == "Greater Melbourne"))
-driving_age_summary_table <- driving_age_summary_table %>% 
-  add_row(gccsa_ur_agep_2011 %>%
-  filter(area_of_interest == "Greater Melbourne"))
-driving_age_summary_table <- driving_age_summary_table %>% 
-  add_row(lga_ur_agep_2021 %>%
-  filter(area_of_interest == "Bayside (Vic.)"))
-driving_age_summary_table <- driving_age_summary_table %>% 
-  add_row(lga_ur_agep_2016 %>%
-  filter(area_of_interest == "Bayside (C)"))
-driving_age_summary_table <- driving_age_summary_table %>% 
-  add_row(lga_ur_agep_2011 %>%
-  filter(area_of_interest == "Bayside (C)"))
-
-driving_age_summary_table$Year <- c(2021, 2016, 2011, 2021, 2016, 2011)
-
-#replace first column with consistent place names
-driving_age_summary_table[["area_of_interest"]] <- c("Greater Melbourne", "Greater Melbourne", "Greater Melbourne", "Bayside", "Bayside", "Bayside")
-
-driving_age_summary_table$driving_age_population <- driving_age_summary_table[,20:117] %>% rowSums()
-
-
-total_population_summary_table <- driving_age_summary_table %>% 
-  select(area_of_interest, Year, total)
-
-
-driving_age_summary_table <- driving_age_summary_table %>% 
-  select(area_of_interest, Year, driving_age_population)
-
-driving_age_summary_table_wider <- driving_age_summary_table %>% 
-  select(area_of_interest, Year, driving_age_population) %>% 
-  pivot_wider(
-  names_from = area_of_interest, 
-  values_from = driving_age_population
-)
-
-
-driving_age_summary_table_wider$`Rest of Greater Melbourne` <- driving_age_summary_table_wider$`Greater Melbourne` - driving_age_summary_table_wider$Bayside
- 
-driving_age_summary_table_wider <- driving_age_summary_table_wider %>% 
-  select(Year, Bayside, `Rest of Greater Melbourne`)
-
-driving_age_summary_table_wider$Year <- driving_age_summary_table_wider$Year %>%   factor(levels = c("2011", "2016", "2021")) 
-
-driving_age_summary_table_wider <- driving_age_summary_table_wider %>% 
-  arrange(Year)
-
-driving_age_summary_table_wider %>%   
-  adorn_totals(where = "col") %>% 
-  adorn_percentages(denominator = "row") %>% 
-  adorn_pct_formatting() %>% 
-  adorn_ns() %>%
-  kable(caption = "Total population 18 and older", 
-        align = 'lrr', 
-        format.args = list(big.mark = ","))
-
- ggbarstats(driving_age_summary_table_wider %>% pivot_longer(
-    cols = 2:3,
-    names_to = "area_of_interest", 
-    values_to = "Total population 18 and older"),
-  y = Year, 
-  x = area_of_interest, 
-  counts = "Total population 18 and older")
-
- 
-#### Total Popluation 
- 
-total_population_summary_table_wider <- total_population_summary_table %>% 
-  pivot_wider(
-  names_from = area_of_interest, 
-  values_from = total
-)
-
-
-total_population_summary_table_wider$`Rest of Greater Melbourne` <- total_population_summary_table_wider$`Greater Melbourne` - total_population_summary_table_wider$Bayside
- 
-total_population_summary_table_wider <- total_population_summary_table_wider %>% 
-  select(Year, Bayside, `Rest of Greater Melbourne`)
-
-total_population_summary_table_wider$Year <- total_population_summary_table_wider$Year %>%   factor(levels = c("2011", "2016", "2021")) 
-
-total_population_summary_table_wider <- total_population_summary_table_wider %>% 
-  arrange(Year)
-
-total_population_summary_table_wider %>%   
-  adorn_totals(where = "col") %>% 
-  adorn_percentages(denominator = "row") %>% 
-  adorn_pct_formatting() %>% 
-  adorn_ns() %>%
-  kable(caption = "Total population", 
-        align = 'lrr', 
-        format.args = list(big.mark = ","))
-
- ggbarstats(total_population_summary_table_wider %>% pivot_longer(
-    cols = 2:3,
-    names_to = "area_of_interest", 
-    values_to = "Total population"),
-  y = Year, 
-  x = area_of_interest, 
-  counts = "Total population")
-
- 
-```
 
 
 # Discussion and Conclusions
