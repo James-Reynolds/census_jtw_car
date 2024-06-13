@@ -164,6 +164,19 @@ lga_dw_vehd_2011 <- lga_dw_vehd_2011 %>% clean_names()
 
 ```
 
+## Journey to work
+
+```{r jtw_load_data, message=FALSE, warning=FALSE, echo=FALSE}
+
+gccsa_ur_agep_2021 <- read_csv("data/gccsa_ur_agep_2021.csv", 
+    skip = 8)
+#remove unneeded rows and columns and clean names
+gccsa_ur_agep_2021 <- gccsa_ur_agep_2021[-1,]
+gccsa_ur_agep_2021 <- gccsa_ur_agep_2021[1:34,1:118]
+gccsa_ur_agep_2021 <- gccsa_ur_agep_2021 %>% clean_names()
+
+```
+
 
 
 # Results
@@ -423,6 +436,9 @@ grouped_ggbarstats(data = share_18_and_old_longer,
 
 
 ## Vehicle availabilty
+
+The following table shows the total number of vehicles (excluding trucks etc.) parked at or near households on the night of the census.
+
 ```{r cars_per_dwelling_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.caption = "Total vehicles at or near household on the night of the census", fig.fullwidth = TRUE}
 
 cars_per_dwelling_summary_table <- gccsa_dw_vehd_2021 %>%
@@ -515,7 +531,7 @@ total_cars_summary_table %>%
   adorn_percentages(denominator = "row") %>% 
   adorn_pct_formatting() %>% 
   adorn_ns() %>%
-  kable(caption = "Total number of cars by census", 
+  kable(caption = "Total number of vehicles parked at or near household on the night of the census", 
         align = 'lrr', 
         format.args = list(big.mark = ","))
 
@@ -529,7 +545,28 @@ total_cars_summary_table %>%
 
 ```
 
+There were over 11k more vehicles (+20%) at dwellings in Bayside in 2021 than 2011, but this rate of increase is less than the rest of Greater Melbourne (+31%). 
 
+```{r cars_per_person_18_plus, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.caption = "Vehicles at or near household on the night of the census per person aged 18 years or older", fig.fullwidth = TRUE}
+
+cars_per_18plus_summary_table <- total_cars_summary_table
+
+cars_per_18plus_summary_table$Bayside <- cars_per_18plus_summary_table$Bayside / share_18_and_old_bayside$x18_plus
+cars_per_18plus_summary_table$`Rest of Greater Melbourne` <- cars_per_18plus_summary_table$`Rest of Greater Melbourne` / share_18_and_old_rest_of_melbourne$x18_plus
+
+cars_per_18plus_summary_table %>% kable(
+  caption = "Vehicles at or near household on the night of the census per person aged 18 years or older",
+  align = "lrr"
+)
+
+
+
+```
+
+Vehicles per person 18 years or older is shown in the above table. This is 6-9% higher in Bayside than elsewhere. Bayside grew 5.9% from 2021 to 2011, while the rest of Melbourne grew 5.5%. 
+
+
+## Journey to work
 
 # Discussion and Conclusions
 
