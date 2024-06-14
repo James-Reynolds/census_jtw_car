@@ -251,7 +251,7 @@ lga_ur_mtwp_2011 <- lga_ur_mtwp_2011 %>% type.convert(as.is = T)
 
 The following tables and figures show the population that is 18 years and older and the total populations in both the City of Bayside and the rest of Greater Melbourne. 
 
-```{r population_of_driving_age_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, fig.caption = "Total population 18 and older"}
+```{r population_of_driving_age_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, fig.margin = TRUE, fig.cap = "Total population 18 and older"}
 
 driving_age_summary_table <- gccsa_ur_agep_2021 %>%
   filter(area_of_interest == "Greater Melbourne")
@@ -304,29 +304,31 @@ driving_age_summary_table_wider$Year <- driving_age_summary_table_wider$Year %>%
 driving_age_summary_table_wider <- driving_age_summary_table_wider %>% 
   arrange(Year)
 
+#ggbarstats(driving_age_summary_table_wider %>% pivot_longer(
+#    cols = 2:3,
+#    names_to = "area_of_interest", 
+#    values_to = "Total population 18 and older"),
+#  y = Year, 
+#  x = area_of_interest, 
+#  counts = "Total population 18 and older")
+
+ 
 driving_age_summary_table_wider %>%   
   adorn_totals(where = "col") %>% 
   adorn_percentages(denominator = "row") %>% 
   adorn_pct_formatting() %>% 
   adorn_ns() %>%
   kable(caption = "Total population 18 and older", 
-        align = 'lrr', 
+        align = 'lrrr', 
         format.args = list(big.mark = ","))
 
- ggbarstats(driving_age_summary_table_wider %>% pivot_longer(
-    cols = 2:3,
-    names_to = "area_of_interest", 
-    values_to = "Total population 18 and older"),
-  y = Year, 
-  x = area_of_interest, 
-  counts = "Total population 18 and older")
-
+ 
 ```
  
+Bayside makes up ~2% of the population of Greater Melbourne. Almost 10k (+10%) more people in 2021 than in 2011, but less growth than Greater Melbourne as a whole (+23%).
 
 
-
-```{r population_total_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, fig.caption = "Total population"}
+```{r population_total_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, fig.margin = TRUE, fig.cap = "Total population"}
 
  
 #### Total Popluation 
@@ -348,6 +350,16 @@ total_population_summary_table_wider$Year <- total_population_summary_table_wide
 total_population_summary_table_wider <- total_population_summary_table_wider %>% 
   arrange(Year)
 
+
+# ggbarstats(total_population_summary_table_wider %>% pivot_longer(
+#    cols = 2:3,
+#    names_to = "area_of_interest", 
+#    values_to = "Total population"),
+#  y = Year, 
+#  x = area_of_interest, 
+#  counts = "Total population")
+ 
+ 
 total_population_summary_table_wider %>%   
   adorn_totals(where = "col") %>% 
   adorn_percentages(denominator = "row") %>% 
@@ -356,19 +368,12 @@ total_population_summary_table_wider %>%
   kable(caption = "Total population", 
         align = 'lrr', 
         format.args = list(big.mark = ","))
-
- ggbarstats(total_population_summary_table_wider %>% pivot_longer(
-    cols = 2:3,
-    names_to = "area_of_interest", 
-    values_to = "Total population"),
-  y = Year, 
-  x = area_of_interest, 
-  counts = "Total population")
 ```
 
-The following tables and figures compare the share of the population that is over or under the age of 18. 
+A little over 9k (+13%) more people in Bayside are old enough to drive alone (Ps) in 2021 than in 2011. Greater Melbourne up by 24%.
 
-```{r population_comparisons, message=FALSE, warning=FALSE, echo=FALSE, fig.caption = "Population share: younger than 18 compared to 18 and over", fig.fullwidth = TRUE, fig.height = 10}
+
+```{r population_comparisons, message=FALSE, warning=FALSE, echo=FALSE, fig.cap = "Population share: younger than 18 compared to 18 and over", fig.margin = FALSE, fig.height = 10}
 
  population_comparison_table <- driving_age_summary_table_wider %>%
    adorn_totals(where = "col")
@@ -394,18 +399,18 @@ population_comparison_table$x18plus_share_rest_of_melbourne <- population_compar
 population_comparison_table$x18plus_share_greater_melbourne <- population_comparison_table$x18plus_greater_melbourne / population_comparison_table$total_population_greater_melbourne
 
 # plot giant comparison table
-kable(population_comparison_table %>% 
-        adorn_pct_formatting(,,,8:10), 
-      caption = "City of Bayside and Rest of Greater Melbourne: population 18 and over, total, and share 18 and over",
-      align = "lrrrrrrrrrr",
-      format.args = list(big.mark = ",", scientific = FALSE),
-      col.names = c("Year", 
-                   "City of Bayside", "Rest of Greater Melbourne", "Total",
-                   "City of Bayside", "Rest of Greater Melbourne", "Total",
-                   "City of Bayside", "Rest of Greater Melbourne", "Total")
-      ) %>% 
-  column_spec(column = 8:10, ) %>%
-  add_header_above(c("Census" =1, "18 years and older" = 3, "Total population" = 3, "Share 18 years and older" = 3))
+#kable(population_comparison_table %>% 
+#        adorn_pct_formatting(,,,8:10), 
+#      caption = "City of Bayside and Rest of Greater Melbourne: population 18 #and over, total, and share 18 and over",
+#      align = "lrrrrrrrrrr",
+#      format.args = list(big.mark = ",", scientific = FALSE),
+#      col.names = c("Year", 
+#                   "City of Bayside", "Rest of Greater Melbourne", "Total",
+#                   "City of Bayside", "Rest of Greater Melbourne", "Total",
+#                  "City of Bayside", "Rest of Greater Melbourne", "Total")
+#      ) %>% 
+#  column_spec(column = 8:10, ) %>%
+#  add_header_above(c("Census" =1, "18 years and older" = 3, "Total population" = 3, "Share 18 years and older" = 3))
 
 
 # compares shares
@@ -471,17 +476,6 @@ share_18_and_old <- add_row(share_18_and_old_bayside %>%
 
 share_18_and_old <- share_18_and_old %>% arrange(Year)
 
-
-kable(share_18_and_old %>% 
-        untabyl() %>%
-        adorn_totals(where = "col") %>%
-        adorn_percentages() %>% 
-        adorn_pct_formatting() %>% 
-        adorn_ns, 
-      caption = "City of Bayside and Rest of Greater Melbourne: population younger and older than 18",
-      align = "llrrr",
-      col.names = c("Year", "Location", "under 18", "over 18", "Total"))
-
 share_18_and_old_longer <- share_18_and_old %>% 
   pivot_longer(cols = 3:4,
                names_to = "group", 
@@ -495,16 +489,29 @@ grouped_ggbarstats(data = share_18_and_old_longer,
                    plotgrid.args = list(nrow = 3), 
                    xlab = "Age group", 
                    ylab = "Area")
-                   
+
+
+
+kable(share_18_and_old %>% 
+        untabyl() %>%
+        adorn_totals(where = "col") %>%
+        adorn_percentages() %>% 
+        adorn_pct_formatting() %>% 
+        adorn_ns, 
+      caption = "City of Bayside and Rest of Greater Melbourne: population younger and older than 18",
+      align = "llrrr",
+      col.names = c("Year", "Location", "under 18", "over 18", "Total"))
+               
 
 ```
 
+The share of the population who are 18 or older was lower in Bayside (76.5%) in 2011 than rest of Melbourne (77.8%). The difference in 2021 is still statistically significant, but small (78.3% vs 78.5%). 
 
 ## Vehicle availabilty
 
 The following table shows the total number of vehicles (excluding trucks etc.) parked at or near households on the night of the census.
 
-```{r cars_per_dwelling_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.caption = "Total vehicles at or near household on the night of the census", fig.fullwidth = TRUE}
+```{r cars_per_dwelling_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.cap = "Total vehicles at or near household on the night of the census", fig.margin = TRUE}
 
 cars_per_dwelling_summary_table <- gccsa_dw_vehd_2021 %>%
   filter(vehd_number_of_motor_vehicles == "Greater Melbourne")
@@ -600,19 +607,19 @@ total_cars_summary_table %>%
         align = 'lrr', 
         format.args = list(big.mark = ","))
 
- ggbarstats(total_cars_summary_table %>% pivot_longer(
-    cols = 2:3,
-    names_to = "area_of_interest", 
-    values_to = "Total cars"),
-  y = Year, 
-  x = area_of_interest, 
-  counts = "Total cars")
+# ggbarstats(total_cars_summary_table %>% pivot_longer(
+#    cols = 2:3,
+#    names_to = "area_of_interest", 
+#    values_to = "Total cars"),
+#  y = Year, 
+#  x = area_of_interest, 
+#  counts = "Total cars")
 
 ```
 
-There were over 11k more vehicles (+20%) at dwellings in Bayside in 2021 than 2011, but this rate of increase is less than the rest of Greater Melbourne (+31%). 
+Bayside has ~2% of the private vehicles^[Parked at or near dwellings on census night. Not including bicycles.] in Greater Melbourne. There were 11k more private vehicles in Bayside in 2021 than in 2011. However, there was less growth in the number of private vehicles in Bayside (+20%) than for the rest of Melbourne (+31%).
 
-```{r cars_per_person_18_plus, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.caption = "Vehicles at or near household on the night of the census per person aged 18 years or older", fig.fullwidth = TRUE}
+```{r cars_per_person_18_plus, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.cap = "Vehicles at or near household on the night of the census per person aged 18 years or older", fig.margin = TRUE}
 
 cars_per_18plus_summary_table <- total_cars_summary_table
 
@@ -621,19 +628,20 @@ cars_per_18plus_summary_table$`Rest of Greater Melbourne` <- cars_per_18plus_sum
 
 cars_per_18plus_summary_table %>% kable(
   caption = "Vehicles at or near household on the night of the census per person aged 18 years or older",
-  align = "lrr"
+  align = "lrr", 
+  format.args = list(digits = 2)
 )
 
 
 
 ```
 
-Vehicles per person 18 years or older is shown in the above table. This is 6-9% higher in Bayside than elsewhere. Bayside grew 5.9% from 2021 to 2011, while the rest of Melbourne grew 5.5%. 
+The number of private vehicles^[As before, parked at or near dwellings on the night of the census and not including bicycles.] per person 18 years or older in Bayside was higher in all three census than for the rest of Melbourne (by 6.6%, 9% and 7% respectively). Private vehicles per person 18 years or older in Bayside grew 5.9% from 2021 (0.81) to 2011 (0.86). The rest of Melbourne grew 5.5% (0.76 to 0.81). 
 
 
 ## Journey to work
 
-```{r jtw_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.caption = "Work and journey-to-work status on census day", fig.fullwidth = TRUE, fig.height= 15}
+```{r jtw_summarise_data, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.cap = "Work and journey-to-work status on census day", fig.margin = FALSE, fig.height= 7}
 
 
 jtw_summary_table_function <- function(
@@ -834,11 +842,11 @@ tibble(year = jtw_summary_table$Year,
 ) %>% 
   grouped_ggbarstats(
     x = status,
-    y = location, 
-    grouping.var = year,
+    y = year, 
+    grouping.var = location,
     counts = count,
-    plotgrid.args = list(nrow = 3), 
-    xlab = "Location", 
+    plotgrid.args = list(nrow = 2), 
+    xlab = "Year", 
     ylab = "Activity share"
   )
   
@@ -848,9 +856,48 @@ tibble(year = jtw_summary_table$Year,
 
 ```
 
+Around 44k people resident in Bayside worked on census day in 2021, up from around 39k in 2011 . The share of the population working increased from 42.1% to 43.8%, as did the share of the population who were employed but did not work on the day of the census itself (from 4.9% to 5.8%). Changes in the share of the population working, not working and not employed in Bayside are generally similar to those for the rest of Melbourne. 
+
+```{r jtw_mode_wfh_share, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.cap = "Journey-to-work mode and WFH status on census day", fig.margin = FALSE, fig.height= 10}
 
 
-```{r jtw_mode_wfh_share, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.caption = "Journey-to-work mode and WFH status on census day", fig.fullwidth = TRUE, fig.height= 20}
+mode_activity <- tibble(year = jtw_summary_table$Year, 
+       location = jtw_summary_table$area_of_interest,
+       transit  = jtw_summary_table %>% 
+         select(2:5) %>% 
+         rowSums(),
+       driver = jtw_summary_table %>% 
+         select(7, 9, 10) %>% 
+         rowSums(),
+       passenger = jtw_summary_table %>% 
+         select(6, 8) %>% 
+         rowSums(),
+       bicycle = jtw_summary_table$bicycle,
+       walked_only = jtw_summary_table$walked_only,
+       other_mode = jtw_summary_table$other,
+       worked_at_home = jtw_summary_table$worked_at_home) %>% 
+  pivot_longer(
+  cols = 3:9, 
+  names_to = "mode_activity", 
+  values_to = "count"
+) 
+
+mode_activity$mode_activity <- mode_activity$mode_activity %>% as_factor()
+levels(mode_activity$mode_activity) <- c("transit", "driver", "passenger", "bicycle", "walked_only", "other_mode", "worked_at_home")
+
+mode_activity %>% 
+  grouped_ggbarstats(
+    x = mode_activity,
+    y = year,
+    counts = count,
+    grouping.var = location, 
+    plotgrid.args = list(nrow = 2), 
+    xlab = "Census year", 
+    ylab = "Mode / activity share"
+  )
+
+
+
 
 tibble(year = jtw_summary_table$Year, 
        location = jtw_summary_table$area_of_interest,
@@ -886,59 +933,32 @@ tibble(year = jtw_summary_table$Year,
                       "Total")
   )
 
-mode_activity <- tibble(year = jtw_summary_table$Year, 
-       location = jtw_summary_table$area_of_interest,
-       transit  = jtw_summary_table %>% 
-         select(2:5) %>% 
-         rowSums(),
-       driver = jtw_summary_table %>% 
-         select(7, 9, 10) %>% 
-         rowSums(),
-       passenger = jtw_summary_table %>% 
-         select(6, 8) %>% 
-         rowSums(),
-       bicycle = jtw_summary_table$bicycle,
-       walked_only = jtw_summary_table$walked_only,
-       other_mode = jtw_summary_table$other,
-       worked_at_home = jtw_summary_table$worked_at_home) %>% 
-  pivot_longer(
-  cols = 3:9, 
-  names_to = "mode_activity", 
-  values_to = "count"
-) 
 
-mode_activity$mode_activity <- mode_activity$mode_activity %>% as_factor()
-levels(mode_activity$mode_activity) <- c("transit", "driver", "passenger", "bicycle", "walked_only", "other_mode", "worked_at_home")
+```
 
-mode_activity %>% 
-  grouped_ggbarstats(
-    x = mode_activity,
-    y = location,
-    counts = count,
-    grouping.var = year, 
-    plotgrid.args = list(nrow = 3), 
-    xlab = "Location", 
-    ylab = "Mode / activity share"
-  )
+Pre-COVID, Bayside's journey-to-work transit mode share was up more (15.5% in 2011 to 18.2% in 2016) than rest of Melbourne (15.6% to 17.3%). In 2021, Bayside has a lower transit (3.8%) and higher WFH share (48.9%) than the rest of Melbourne (6.1% and 32.3%).  
+
+During COVID there were large shifts to WFH in both Bayside (49%) and the rest of Melbourne (32%). Transit use dropped to 4% and 6%, while driving also dropped to 41% and 54% respectively. 
+
+```{r jtw_mode_share, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.cap = "Journey-to-work mode and WFH status on census day", fig.margin = FALSE, fig.height= 10}
 
 
 mode_activity %>% filter(
   mode_activity != "worked_at_home") %>% 
   grouped_ggbarstats(
     x = mode_activity,
-    y = location,
+    y = year,
     counts = count,
-    grouping.var = year, 
-    plotgrid.args = list(nrow = 3), 
-    xlab = "Location", 
+    grouping.var = location, 
+    plotgrid.args = list(nrow = 2), 
+    xlab = "Census year", 
     ylab = "Mode share"
   )
-
-
 ```
 
+Amongst those still traveling to work there was a shift from transit to driving. The drop in transit share was larger in Bayside (20% to 7%) than for the rest of Melbourne (18% to 9%)
 
-```{r jtw_transit_share, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.caption = "Transit mode share on census day", fig.fullwidth = TRUE, fig.height= 15}
+```{r jtw_transit_share, message=FALSE, warning=FALSE, echo=FALSE, echo=FALSE, fig.cap = "Transit mode share on census day", fig.margin = FALSE, fig.height= 7}
 
 tibble(year = jtw_summary_table$Year, 
        location = jtw_summary_table$area_of_interest,
@@ -975,19 +995,64 @@ tibble(year = jtw_summary_table$Year,
 ) %>% 
   grouped_ggbarstats(
     x = mode,
-    y = location, 
+    y = year, 
     counts = count,
-    grouping.var = year, 
-    plotgrid.args = list(nrow = 3), 
-    xlab = "Location", 
+    grouping.var = location, 
+    plotgrid.args = list(nrow = 2), 
+    xlab = "Census year", 
     ylab = "Mode share"
   )
   
 
 ```
 
+For transit users, there has been a shift in mode share from train to bus between 2016 and 2021. However, train still dominates in both Bayside (86%) and the rest of Melbourne (67%). 
+
 
 # Discussion and Conclusions
+Findings from this review of census data for 2011, 2016 and 2021 for the City of Bayside and the rest of Greater Melbourne include: 
+
+## Population: 
+
+- The City of Bayside makes up around 2% of the population of Greater Melbourne. 
+- There were around 10,000 more people living in Bayside in 2021 compared to 2011 (+10%). 
+- This growth rate is less than that of Greater Melbourne as a whole (+23%).
+- Around 79K people in Bayside in 2021 were aged 18 years or older (78.3%). This is a similar share to the rest of Greater Melbourne (78.5%).
+
+
+## Private vehicles^[Parked at or near dwellings on census night. Not including trucks or bicycles.]:
+
+- Bayside also has around 2% of the private vehicles in Greater Melbourne.  
+- There were around 11k more private vehicles in Bayside in 2021 than 2011. 
+- This growth rate (+20%) was less than that for the rest of Greater Melbourne (+31%). 
+- There were 0.861 vehicles per person aged 18 or older in 2021 in Bayside. 
+- This was 7% higher than the rate for the rest of Greater Melbourne (0.805).
+- This was also 5.9% higher than the rate in Bayside in 2011 (0.813), whereas the rest of Greater Melbourne only grew by 5.9% (from 0.763).
+
+## Working status: 
+
+- ~44k Bayside residents worked on census day in 2021 (43.8%), ~6k were employed by not working (5.8%)^[A small number were eligible to, but did not respond to the JTW question (196, 0.2%), and so are not included in the other categories.] and ~51k (50.2%) were not in the labor force. This share is generally similar to the rest of Greater Melbourne.
+- There were around 6k more people living in Bayside who worked on census day in 2021 than in 2011 (+15%), but this rate of increase is less than the rest of Greater Melbourne (+26%)
+
+## Journey-to-work and WFH mode/activity share: 
+
+- Transit use had increasing pre-COVID in Bayside, from 15% in 2011 to 18.2% in 2016. 
+- This increase was higher than for the rest of Greater Melbourne (15.6% to 17.3%)
+- Driving a private vehicle had dropped in Bayside from 68% in 2011 to 64.8% in 2016, both of which were lower than the rest of Greater Melbourne (69.8% dropping to 68.2%). 
+- COVID-19 induced a large shift from transit (3.8% in Bayside in 2021) and driving (41.2%) to WFH (up from 8.7% in 2016 to 48.9% in 2021). 
+- The shift to WFH was more pronounced in Bayside than the rest of Greater Melbourne, which was 6.1% transit, 54% drive and 32.3% WFH in 2021. 
+- For those travelling to work, there was a shift from transit to driving. In Bayside transit share dropped from 20% in 2016 to 7% in 2021, while driving increased from 71% to 81%.  These changes were similar to the rest of Greater Melbourne^[Transit 18% in 2016 to 9% in 2021. Driving 71% in 2016 to 80% in 2021.].
+- Among transit users there was a shift from train^[Bayside 93% in 2016 to 86% in 2021, rest of Melbourne 73% to 67%] to bus^[4% to 11% for Bayside, and 10% to 16% for the rest of Greater Melbourne]. 
+
+## Overall
+
+- Bayside has been growing in people and vehicles, but at lower rates than the rest of Greater Melbourne.
+- Transit mode share was going up, but COVID led to a very large shift to WFH, which is larger in Bayside than the rest of Greater Melbourne. 
+- Transit (especially train) has lost share to driving, but the number of people driving to work has still decreased by around 9k^[Down 32% from ~27k to ~18k in Bayside, compared to a fall of 10% for the rest of Greater Melbourne] while transit JTW ridership has fallen only around 6k^[Down 78% from ~8k to ~2k, compared to a fall of 60% for the rest of Greater Melbourne].
+
+Overall, in comparison to the rest of Greater Melbourne, Bayside had: lower growth in population and vehicles; greater drops in JTW transit ridership and driving; but more vehicles per person aged 18 or older and more WFH. 
+
+
 
 # References
 
